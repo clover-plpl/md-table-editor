@@ -1,4 +1,10 @@
-﻿import { TextSource } from "./src/interfaces/TextSource";
+﻿/**
+ * 
+ * このコードに意味はありません。
+ * 
+ */
+
+import { TextSource } from "./src/interfaces/TextSource";
 import { MarkdownParser } from "./src/app/MarkdownParser";
 import { IMarkdownContent } from "./src/interfaces/IMarkdownContent";
 
@@ -48,14 +54,4 @@ function* lst()
 }
 
 let r = lst();
-
-
-
-
-
-
-
-
-const len = 10000 * 10000 * 200;
-for (let i = 0; i < len; i++);
 
