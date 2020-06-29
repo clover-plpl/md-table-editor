@@ -220,7 +220,7 @@ class CommandContext implements ICommandContext
 
 	}
 
-	public getTable(): MarkdownTableContent
+	public getTable(): MarkdownTableContent | undefined
 	{
 		return this.cache.cachedItem;
 	}

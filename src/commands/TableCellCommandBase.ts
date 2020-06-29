@@ -29,6 +29,7 @@ class FormattableParameter implements IFormattableParameter
 	{
 
 	}
+	
 
 
 
@@ -36,7 +37,7 @@ class FormattableParameter implements IFormattableParameter
 
 	public setFocusedCellInfo(...focus: (ISelection | undefined)[]): void
 	{
-		this._focus = (focus || []).filter(_ => !!_);
+		this._focus = (focus || []).filter(_ => !!_) as ISelection[];
 	}
 
 	public format(): void

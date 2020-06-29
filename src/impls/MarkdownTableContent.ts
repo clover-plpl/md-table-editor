@@ -6,6 +6,7 @@ import { IDocumentPosition } from "../interfaces/IDocumentPosition";
 import { TablePosition } from "../interfaces/TablePosition";
 import { StringCounter } from "../StringCounter";
 import { ISelection } from "../interfaces/ISelection";
+import { IStringCounter } from "../interfaces/IStringCounter";
 
 
 
@@ -815,9 +816,9 @@ export abstract class TableRowBase<TCell extends TableCell>
 	}
 
 
-	public getCellRangeFromCell(cell: TableCell): MarkdownRange | null
+	public getCellRangeFromCell(cell: TableCell, strCounter?: IStringCounter): MarkdownRange | null
 	{
-		for (const r of this.getCellRanges())
+		for (const r of this.getCellRanges(strCounter))
 		{
 			if (cell === r.cell)
 			{
@@ -835,9 +836,9 @@ export abstract class TableRowBase<TCell extends TableCell>
 	 * @param charIndex 
 	 * @param strCount 
 	 */
-	public getCellRangeFromCharacterIndex(charIndex: number): CellRangeInfo | undefined
+	public getCellRangeFromCharacterIndex(charIndex: number, strCounter?: IStringCounter): CellRangeInfo | undefined
 	{
-		for (const r of this.getCellRanges())
+		for (const r of this.getCellRanges(strCounter))
 		{
 			if (r.range.internalOrZero(charIndex))
 			{
@@ -846,9 +847,9 @@ export abstract class TableRowBase<TCell extends TableCell>
 		}	
 	}
 
-	public getCellRangeFromColumnIndex(columnIndex: number): CellRangeInfo | undefined
+	public getCellRangeFromColumnIndex(columnIndex: number, strCounter?: IStringCounter): CellRangeInfo | undefined
 	{
-		for(const r of this.getCellRanges())
+		for(const r of this.getCellRanges(strCounter))
 		{
 			const ci = r.columnIndex;
 			if(ci !== -1 && ci === columnIndex)
@@ -858,13 +859,13 @@ export abstract class TableRowBase<TCell extends TableCell>
 		}
 	}
 
-	public *getCellRanges(): IterableIterator<CellRangeInfo>
+	public *getCellRanges(strCounter: IStringCounter = str => str.length): IterableIterator<CellRangeInfo>
 	{
 		let cp = 0;
 
 		for (const cell of this)
 		{
-			let len = StringCounter.stringCount(cell.word);
+			let len = strCounter(cell.word);
 
 			yield new CellRangeInfo(this, cell,  MarkdownRange.fromLength(cp, len));
 			cp++;

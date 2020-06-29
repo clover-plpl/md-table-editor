@@ -10,13 +10,11 @@ import { IAppContext } from "../interfaces/IAppContext";
 import { IAppCommandStateUpdatable } from "../interfaces/IAppRegister";
 import { IEventReciever, ITextChanged, ISelectChanged } from "../interfaces/IEventReciever";
 
-
-
 export abstract class AppMain
 {
 	//private proxy: AppContextProxy;
 	protected readonly cache: TableCacheManager;
-	protected commandExecutionManager: IAppCommandStateUpdatable
+	protected commandExecutionManager: IAppCommandStateUpdatable | undefined
 	protected readonly helper: AppHelper;
 	private readonly eventReciever: EventReciever;
 
@@ -42,21 +40,10 @@ export abstract class AppMain
 		this.recieverSwitcher = new RecieverSwitcher(this.eventReciever);
 		this.decoratorSwitcher = new DecoratorSwitcher(appContext);
 
-		// デコレーション
+
 		this.cache.cacheItemUpdated.push((nv, ov) =>
 		{
-			this.appContext.clearDecorate();
-			
-			if (nv)
-			{
-				const docPos = appContext.getCursor();
-				if (docPos)
-				{
-					this.decoratorSwitcher.decorate(() => appContext.decorate(nv, docPos));
-				}
-			}
-			
-			this.commandExecutionManager.updateContents();
+			this.onCurrentTableChanged(nv, ov);
 		});
 
 
@@ -112,6 +99,27 @@ export abstract class AppMain
 
 	}
 	
+	
+	protected onCurrentTableChanged(nv: MarkdownTableContent | undefined, ov: MarkdownTableContent | undefined)
+	{
+		const appContext = this.appContext;
+
+		appContext.clearDecorate();
+		
+		if (nv)
+		{
+			const docPos = appContext.getCursor();
+			if (docPos)
+			{
+				this.decoratorSwitcher.decorate(() => appContext.decorate(nv, docPos));
+			}
+		}
+		
+		// コマンドの有効状態を更新
+		this.commandExecutionManager?.updateContents();
+
+	}
+
 }
 
 
@@ -175,7 +183,7 @@ class RecieverSwitcher
 
 class DecoratorSwitcher
 {
-	private _enabled: boolean;
+	private _enabled: boolean = false ;
 
 	public constructor(private readonly appContext: IAppContext)
 	{

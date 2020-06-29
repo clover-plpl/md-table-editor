@@ -31,24 +31,24 @@ export class FocusCommand extends FocusCommandBase
 		const colIndex = cellInfo.columnIndex;
 		const rowIndex = cellInfo.rowIndex;
 
-		let currentCell = cellInfo;
+		let currentCell: TableCellInfo | undefined = cellInfo;
 
 		// 左移動(ワープ)
 		if(this.direction === Direction.Left)
 		{
 			if(colIndex > 0)
 			{
-				return currentCell.getCellFromDirection(Direction.Left);
+				return currentCell?.getCellFromDirection(Direction.Left);
 			}
 
-			currentCell = currentCell.getCellFromDirection(Direction.Top);
+			currentCell = currentCell?.getCellFromDirection(Direction.Top);
 
 			if(rowIndex === 0)
 			{
 				currentCell = currentCell?.getCellFromDirection(Direction.Top);
 			}
 
-			const lastColIndex = currentCell?.rowCellsLength - 1 || 0;
+			const lastColIndex = Math.max(0, (currentCell?.rowCellsLength || 0) -1);
 
 			return currentCell?.getCellFromRelative(new TablePosition(0, lastColIndex));
 		}
@@ -60,10 +60,10 @@ export class FocusCommand extends FocusCommandBase
 
 			if(colIndex < lastColIndex)
 			{
-				return currentCell.getCellFromDirection(Direction.Right);
+				return currentCell?.getCellFromDirection(Direction.Right);
 			}
 
-			currentCell = currentCell.getCellFromAbsolute(cellInfo.tablePosition.setColumnIndex(0));
+			currentCell = currentCell?.getCellFromAbsolute(cellInfo.tablePosition.setColumnIndex(0));
 
 			currentCell = currentCell?.getCellFromDirection(Direction.Bottom);
 
@@ -77,7 +77,7 @@ export class FocusCommand extends FocusCommandBase
 
 		if(this.direction === Direction.Top)
 		{
-			currentCell = currentCell.getCellFromDirection(Direction.Top);
+			currentCell = currentCell?.getCellFromDirection(Direction.Top);
 
 			if(rowIndex === 0)
 			{
@@ -89,7 +89,7 @@ export class FocusCommand extends FocusCommandBase
 
 		if(this.direction === Direction.Bottom)
 		{
-			currentCell = currentCell.getCellFromDirection(Direction.Bottom);
+			currentCell = currentCell?.getCellFromDirection(Direction.Bottom);
 
 			if(rowIndex === -2)
 			{
